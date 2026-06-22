@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RoosCloset · AWS Activate Pitch</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+
+  <!-- GSAP + Plugins -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollSmoother.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/SplitText.min.js"></script>
+
+  <style>
+    /* ─── TOKENS ──────────────────────────────────────────── */
+    :root {
+      --bg:          #F8F5F0;
+      --bg-alt:      #FFFFFF;
+      --ink:         #0D0D0D;
+      --ink-2:       #3A3A3A;
+      --ink-muted:   #888888;
+      --emerald:     #065F46;
+      --emerald-mid: #059669;
+      --emerald-pale:#D1FAE5;
+      --emerald-tint:#ECFDF5;
+      --border:      rgba(13,13,13,0.09);
+      --border-mid:  rgba(13,13,13,0.14);
+      --radius-sm:   12px;
+      --radius-md:   20px;
+      --radius-lg:   32px;
+      --radius-xl:   48px;
+    }
+
+    /* ─── RESET ───────────────────────────────────────────── */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: auto; }
+
+    /* Default cursor – gets overridden by .no-cursor when JS loads */
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      overflow-x: hidden;
+      cursor: auto;
+    }
+    body.no-cursor {
+      cursor: none;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    /* ─── CUSTOM CURSOR ──────────────────────────────────── */
+    #cursor-dot {
+      width: 8px; height: 8px;
+      background: var(--ink);
+      border-radius: 50%;
+      position: fixed;
+      top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%,-50%);
+      transition: transform .15s, background .3s, width .3s, height .3s;
+      opacity: 0;
+    }
+    body.no-cursor #cursor-dot,
+    body.no-cursor #cursor-ring {
+      opacity: 1;
+    }
+    #cursor-ring {
+      width: 36px; height: 36px;
+      border: 1.5px solid var(--ink);
+      border-radius: 50%;
+      position: fixed;
+      top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%,-50%);
+      transition: width .3s, height .3s, border-color .3s, opacity .3s;
+      opacity: 0;
+    }
+    body.no-cursor #cursor-dot,
+    body.no-cursor #cursor-ring { opacity: 1; }
+    body.no-cursor:has(a:hover) #cursor-dot,
+    body.no-cursor:has(button:hover) #cursor-dot { width: 12px; height: 12px; background: var(--emerald); }
+    body.no-cursor:has(a:hover) #cursor-ring,
+    body.no-cursor:has(button:hover) #cursor-ring { width: 56px; height: 56px; border-color: var(--emerald); opacity: .6; }
+
+    /* ─── NOISE OVERLAY ──────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9997;
+      opacity: .55;
+    }
+
+    /* ─── SMOOTH WRAPPER ────────────────────────────────── */
+    #smooth-wrapper {
+      will-change: transform;
+    }
+
+    /* ─── NAV ────────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 900;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.5rem 3rem;
+      transition: background .4s, backdrop-filter .4s, border-bottom .4s;
+    }
+    nav.scrolled {
+      background: rgba(248,245,240,.88);
+      backdrop-filter: blur(18px) saturate(180%);
+      -webkit-backdrop-filter: blur(18px) saturate(180%);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.35rem;
+      letter-spacing: -.01em;
+    }
+    .nav-logo span { color: var(--emerald); font-style: italic; }
+    .nav-links {
+      display: flex; align-items: center; gap: 2.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: .82rem; font-weight: 500;
+      letter-spacing: .06em; text-transform: uppercase;
+      color: var(--ink-2);
+      position: relative; padding-bottom: 2px;
+      transition: color .3s;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: 0; left: 0;
+      width: 0; height: 1px; background: var(--emerald);
+      transition: width .35s cubic-bezier(.25,.46,.45,.94);
+    }
+    .nav-links a:hover { color: var(--emerald); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-cta {
+      padding: .55rem 1.4rem;
+      background: var(--ink); color: #fff;
+      border-radius: 40px; font-size: .8rem;
+      font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+      transition: background .3s, transform .25s;
+    }
+    .nav-cta:hover { background: var(--emerald); transform: translateY(-1px); color: #fff; }
+
+    /* ─── MARQUEE ────────────────────────────────────────── */
+    .marquee-bar {
+      overflow: hidden;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: .9rem 0;
+      background: var(--bg-alt);
+      position: relative; z-index: 1;
+    }
+    .marquee-track {
+      display: flex; gap: 0; white-space: nowrap;
+      animation: marquee 30s linear infinite;
+    }
+    .marquee-track span {
+      font-size: .72rem; font-weight: 600;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--ink-muted);
+      padding: 0 2.5rem;
+    }
+    .marquee-track span.accent-dot { color: var(--emerald); }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ─── SECTION BASE ──────────────────────────────────── */
+    section { padding: 9rem 0; position: relative; }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 3rem;
+    }
+
+    /* ─── SECTION LABEL ─────────────────────────────────── */
+    .section-label {
+      display: inline-flex; align-items: center; gap: .6rem;
+      font-size: .72rem; font-weight: 600;
+      letter-spacing: .14em; text-transform: uppercase;
+      color: var(--emerald);
+      margin-bottom: 2rem;
+    }
+    .section-label::before {
+      content: ''; width: 24px; height: 1px;
+      background: var(--emerald);
+    }
+
+    .section-number {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(5rem, 12vw, 10rem);
+      color: rgba(13,13,13,.05);
+      line-height: 1;
+      position: absolute;
+      right: 3rem; top: 6rem;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    /* ─── TYPOGRAPHY ─────────────────────────────────────── */
+    .display {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(3.8rem, 9vw, 7.5rem);
+      line-height: 1.0;
+      letter-spacing: -.03em;
+      color: var(--ink);
+    }
+    .display em { font-style: italic; color: var(--emerald); }
+
+    h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.6rem, 5.5vw, 4rem);
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: -.02em;
+      margin-bottom: 1.5rem;
+    }
+    h2 em { font-style: italic; color: var(--emerald); }
+
+    h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: -.01em;
+      margin-bottom: .6rem;
+    }
+
+    p {
+      font-size: 1.05rem;
+      color: var(--ink-2);
+      line-height: 1.75;
+      max-width: 640px;
+    }
+    p.lead {
+      font-size: 1.3rem;
+      line-height: 1.65;
+      font-weight: 300;
+      color: var(--ink-2);
+      max-width: 700px;
+    }
+
+    /* ─── DIVIDERS ───────────────────────────────────────── */
+    .h-rule {
+      width: 100%; height: 1px;
+      background: var(--border);
+      margin: 0;
+    }
+
+    /* ─── BUTTONS ────────────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: .6rem;
+      padding: 1rem 2.4rem;
+      border-radius: 60px;
+      font-size: .9rem; font-weight: 600;
+      letter-spacing: .02em;
+      transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s, background .3s;
+      cursor: none;
+    }
+    body.no-cursor .btn { cursor: none; }
+    .btn-primary {
+      background: var(--ink); color: #fff;
+    }
+    .btn-primary:hover {
+      background: var(--emerald);
+      transform: translateY(-3px);
+      box-shadow: 0 16px 40px rgba(6,95,70,.25);
+    }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border-mid);
+      color: var(--ink-2);
+    }
+    .btn-ghost:hover {
+      background: var(--bg-alt);
+      border-color: var(--ink);
+      transform: translateY(-2px);
+    }
+    .btn-arrow::after { content: '→'; transition: transform .3s; }
+    .btn-arrow:hover::after { transform: translateX(4px); }
+
+    /* ─── HERO ───────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+      padding-top: 8rem;
+      padding-bottom: 5rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-bg-circle {
+      position: absolute;
+      width: 70vw; height: 70vw;
+      max-width: 900px; max-height: 900px;
+      background: radial-gradient(circle, rgba(16,185,129,.07) 0%, transparent 70%);
+      border-radius: 50%;
+      right: -15vw; top: 5vh;
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: var(--emerald-pale);
+      color: var(--emerald);
+      border: 1px solid rgba(6,95,70,.2);
+      padding: .4rem 1rem;
+      border-radius: 40px;
+      font-size: .72rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      margin-bottom: 2.5rem;
+    }
+    .hero-badge .dot {
+      width: 6px; height: 6px;
+      background: var(--emerald-mid);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: .4; transform: scale(.8); }
+    }
+    .hero-sub {
+      font-size: 1.2rem; font-weight: 300;
+      color: var(--ink-2);
+      max-width: 600px;
+      margin-top: 1.5rem;
+    }
+    .hero-cta-row {
+      display: flex; align-items: center; gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-top: 3.5rem;
+    }
+    .hero-scroll-hint {
+      display: flex; align-items: center; gap: .7rem;
+      font-size: .75rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--ink-muted);
+    }
+    .scroll-line {
+      width: 40px; height: 1px; background: var(--ink-muted);
+      animation: scrollPulse 2s infinite;
+    }
+    @keyframes scrollPulse {
+      0%,100% { width: 40px; opacity: .5; }
+      50%      { width: 70px; opacity: 1; }
+    }
+
+    /* ─── STATS STRIP ────────────────────────────────────── */
+    .stats-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--border);
+      margin-top: 5rem;
+    }
+    .stat-cell {
+      padding: 2.5rem 0;
+      border-right: 1px solid var(--border);
+    }
+    .stat-cell:last-child { border-right: none; padding-left: 3rem; }
+    .stat-cell:first-child { padding-right: 3rem; }
+    .stat-cell:nth-child(2) { padding-left: 3rem; padding-right: 3rem; }
+    .stat-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.5rem, 5vw, 3.8rem);
+      color: var(--ink);
+      line-height: 1.1;
+      letter-spacing: -.03em;
+    }
+    .stat-num em { font-style: italic; color: var(--emerald); }
+    .stat-desc {
+      font-size: .82rem; font-weight: 500;
+      letter-spacing: .04em;
+      color: var(--ink-muted);
+      margin-top: .4rem;
+      max-width: 220px;
+      text-transform: uppercase;
+    }
+
+    /* ─── PROBLEM ────────────────────────────────────────── */
+    .problem-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+      margin-top: 4rem;
+    }
+    .problem-card {
+      padding: 2.5rem;
+      background: var(--bg-alt);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      transition: transform .4s cubic-bezier(.34,1.56,.64,1), box-shadow .4s;
+    }
+    .problem-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 24px 60px rgba(13,13,13,.08);
+    }
+    .problem-icon {
+      width: 52px; height: 52px;
+      background: var(--emerald-tint);
+      border: 1px solid rgba(6,95,70,.15);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 1.5rem;
+    }
+    .problem-stat {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.4rem;
+      color: var(--emerald);
+      line-height: 1;
+      margin: 1rem 0 .5rem;
+    }
+
+    /* ─── SOLUTION CARDS ─────────────────────────────────── */
+    .solution-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 4rem;
+    }
+    .solution-card {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 3rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform .4s cubic-bezier(.34,1.56,.64,1), box-shadow .4s;
+    }
+    .solution-card::before {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--emerald), var(--emerald-mid));
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .5s cubic-bezier(.25,.46,.45,.94);
+    }
+    .solution-card:hover::before { transform: scaleX(1); }
+    .solution-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 30px 70px rgba(13,13,13,.09);
+    }
+    .solution-tag {
+      display: inline-block;
+      font-size: .7rem; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--emerald); background: var(--emerald-tint);
+      padding: .3rem .8rem; border-radius: 30px;
+      margin-bottom: 1.5rem;
+    }
+    .solution-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2rem; font-weight: 400;
+      letter-spacing: -.02em;
+      margin-bottom: .5rem;
+    }
+    .solution-sub {
+      font-size: .85rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: .08em;
+      color: var(--ink-muted);
+      margin-bottom: 1.5rem;
+    }
+    .solution-badge {
+      margin-top: 2.5rem;
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 30px;
+      padding: .4rem 1rem;
+      font-size: .75rem; font-weight: 600;
+      color: var(--ink-2);
+      letter-spacing: .04em;
+    }
+    .solution-badge .dot { width: 6px; height: 6px; background: var(--emerald-mid); border-radius: 50%; }
+
+    /* ─── PIPELINE ───────────────────────────────────────── */
+    .pipeline-wrap {
+      margin-top: 4rem;
+      background: var(--bg-alt);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border);
+      padding: 3rem;
+      overflow: hidden;
+    }
+    .pipeline-row {
+      display: flex; align-items: stretch; gap: 0;
+    }
+    .pipe-step {
+      flex: 1;
+      padding: 1.8rem 1.5rem;
+      text-align: center;
+      position: relative;
+      transition: background .3s;
+    }
+    .pipe-step::after {
+      content: '→';
+      position: absolute; right: -10px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+      color: var(--ink-muted);
+      z-index: 1;
+    }
+    .pipe-step:last-child::after { display: none; }
+    .pipe-step:hover { background: var(--emerald-tint); border-radius: var(--radius-md); }
+    .pipe-icon {
+      font-size: 1.8rem;
+      display: block;
+      margin-bottom: .8rem;
+    }
+    .pipe-name {
+      font-weight: 700; font-size: .9rem;
+      color: var(--ink);
+      display: block; margin-bottom: .3rem;
+    }
+    .pipe-label {
+      font-size: .72rem; color: var(--ink-muted);
+      letter-spacing: .04em;
+    }
+    .pipe-step-num {
+      position: absolute; top: .8rem; left: .8rem;
+      font-size: .65rem; font-weight: 700;
+      letter-spacing: .1em;
+      color: var(--emerald);
+      background: var(--emerald-pale);
+      padding: .15rem .45rem; border-radius: 20px;
+    }
+
+    .atlas-desc-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 2.5rem;
+      padding-top: 2.5rem;
+      border-top: 1px solid var(--border);
+    }
+    .atlas-desc-item {
+      padding: 1.5rem;
+      background: var(--bg);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+    .atlas-desc-item h4 {
+      font-size: .85rem; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: .6rem;
+    }
+    .atlas-desc-item p { font-size: .92rem; max-width: 100%; }
+
+    /* ─── MIRROR LAYERS ──────────────────────────────────── */
+    .mirror-layers {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 4rem;
+    }
+    .mirror-layer {
+      background: var(--bg-alt);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      border: 1px solid var(--border);
+      transition: transform .4s cubic-bezier(.34,1.56,.64,1), box-shadow .4s;
+    }
+    .mirror-layer:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 50px rgba(13,13,13,.07);
+    }
+    .mirror-layer-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 3.5rem;
+      color: var(--emerald-pale);
+      line-height: 1;
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .mirror-layer h4 {
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--ink); margin-bottom: .7rem;
+    }
+    .mirror-layer p { font-size: .95rem; max-width: 100%; }
+
+    .code-block {
+      background: #F0EDE8;
+      border-radius: var(--radius-md);
+      padding: 2rem;
+      border: 1px solid var(--border);
+      margin-top: 3rem;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: .82rem;
+      color: var(--ink-2);
+      line-height: 1.8;
+      overflow-x: auto;
+    }
+    .code-block .key   { color: #059669; }
+    .code-block .val   { color: #0F172A; }
+    .code-block .str   { color: #7C3AED; }
+    .code-block .num   { color: #DC2626; }
+    .code-label {
+      font-size: .7rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: .8rem;
+    }
+
+    /* ─── FLYWHEEL ───────────────────────────────────────── */
+    .flywheel-wrap {
+      margin-top: 4rem;
+      background: var(--bg-alt);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border);
+      padding: 4rem 3rem;
+    }
+    .flywheel-row {
+      display: flex; align-items: center;
+      gap: 1rem; flex-wrap: wrap;
+      justify-content: center;
+    }
+    .fly-item {
+      background: var(--bg);
+      border: 1px solid var(--border-mid);
+      border-radius: var(--radius-xl);
+      padding: 1.2rem 2rem;
+      font-size: .9rem; font-weight: 500;
+      color: var(--ink-2);
+      transition: background .3s, border-color .3s, transform .3s;
+      will-change: transform;
+    }
+    .fly-item strong { color: var(--ink); }
+    .fly-item .em { color: var(--emerald); font-weight: 600; }
+    .fly-item:hover {
+      background: var(--emerald-tint);
+      border-color: rgba(6,95,70,.2);
+      transform: scale(1.03);
+    }
+    .fly-arrow {
+      color: var(--emerald);
+      font-size: 1.3rem; font-weight: 300;
+      flex-shrink: 0;
+    }
+
+    /* ─── AWS GRID ───────────────────────────────────────── */
+    .aws-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: .8rem;
+      margin-top: 4rem;
+    }
+    .aws-item {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1rem .8rem;
+      text-align: center;
+      font-size: .78rem; font-weight: 600;
+      letter-spacing: .03em;
+      color: var(--ink-2);
+      transition: background .3s, border-color .3s, transform .3s, color .3s;
+      will-change: transform;
+    }
+    .aws-item:hover {
+      background: var(--emerald-tint);
+      border-color: rgba(6,95,70,.25);
+      transform: translateY(-2px);
+      color: var(--emerald);
+    }
+
+    /* ─── FOUNDER ────────────────────────────────────────── */
+    .founder-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 5rem;
+      align-items: center;
+    }
+    .founder-left { position: relative; }
+    .founder-avatar {
+      width: 100%; aspect-ratio: 1;
+      max-width: 340px;
+      background: linear-gradient(135deg, var(--emerald-tint), var(--emerald-pale));
+      border-radius: var(--radius-xl);
+      border: 1px solid rgba(6,95,70,.15);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'DM Serif Display', serif;
+      font-size: 5rem; color: var(--emerald);
+    }
+    .founder-detail {
+      display: flex; align-items: center; gap: .6rem;
+      font-size: .82rem; color: var(--ink-muted);
+      margin-bottom: .5rem;
+    }
+    .founder-detail .icon { font-size: .9rem; }
+    .founder-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.6rem;
+      letter-spacing: -.02em;
+      line-height: 1.1;
+      margin-bottom: .5rem;
+    }
+    .founder-title {
+      font-size: .82rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--emerald);
+      margin-bottom: 1.5rem;
+    }
+    .founder-bio { font-size: 1.05rem; margin-bottom: 1.5rem; }
+    .skill-chips {
+      display: flex; flex-wrap: wrap; gap: .5rem;
+      margin-top: 1.5rem;
+    }
+    .chip {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      padding: .35rem .9rem;
+      font-size: .75rem; font-weight: 500;
+      color: var(--ink-2);
+    }
+
+    /* ─── ASK SECTION ────────────────────────────────────── */
+    .ask-section {
+      background: var(--ink);
+      color: #fff;
+    }
+    .ask-section h2 { color: #fff; }
+    .ask-section h2 em { color: var(--emerald-mid); }
+    .ask-section p { color: rgba(255,255,255,.65); }
+    .ask-numbers {
+      display: flex; gap: 4rem;
+      flex-wrap: wrap;
+      margin: 3.5rem 0;
+      padding: 3rem 0;
+      border-top: 1px solid rgba(255,255,255,.08);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .ask-num-block .big {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.5rem, 5vw, 3.5rem);
+      color: #fff; line-height: 1;
+      letter-spacing: -.02em;
+    }
+    .ask-num-block .big em { color: var(--emerald-mid); font-style: italic; }
+    .ask-num-block .small {
+      font-size: .78rem; font-weight: 500;
+      letter-spacing: .08em; text-transform: uppercase;
+      color: rgba(255,255,255,.4);
+      margin-top: .4rem;
+    }
+    .ask-cta-row {
+      display: flex; align-items: center; gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .btn-white {
+      background: #fff; color: var(--ink);
+      padding: 1.1rem 2.8rem;
+    }
+    .btn-white:hover {
+      background: var(--emerald-mid); color: #fff;
+      transform: translateY(-3px);
+      box-shadow: 0 16px 40px rgba(16,185,129,.35);
+    }
+    .btn-ghost-white {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,.2);
+      color: rgba(255,255,255,.75);
+      padding: 1.1rem 2.4rem;
+    }
+    .btn-ghost-white:hover {
+      border-color: rgba(255,255,255,.6);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────── */
+    footer {
+      padding: 2.5rem 0;
+      border-top: 1px solid var(--border);
+    }
+    .footer-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.1rem;
+      color: var(--ink);
+    }
+    .footer-logo em { color: var(--emerald); font-style: italic; }
+    .footer-copy { font-size: .8rem; color: var(--ink-muted); }
+    .footer-link {
+      font-size: .8rem; color: var(--emerald); font-weight: 500;
+      transition: opacity .2s;
+    }
+    .footer-link:hover { opacity: .7; }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────── */
+    @media (max-width: 900px) {
+      nav { padding: 1.2rem 1.8rem; }
+      .nav-links { display: none; }
+      .container { padding: 0 1.8rem; }
+      section { padding: 6rem 0; }
+      .problem-grid,
+      .solution-grid,
+      .mirror-layers,
+      .atlas-desc-grid { grid-template-columns: 1fr; }
+      .founder-wrap { grid-template-columns: 1fr; gap: 3rem; }
+      .stats-strip { grid-template-columns: 1fr; }
+      .stat-cell, .stat-cell:last-child, .stat-cell:nth-child(2) {
+        padding: 1.5rem 0; border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      .pipeline-row { flex-direction: column; gap: 1rem; }
+      .pipe-step::after { content: '↓'; right: auto; left: 50%; bottom: -18px; top: auto; transform: translateX(-50%); }
+      .section-number { display: none; }
+      .ask-numbers { gap: 2rem; }
+      .flywheel-row { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CURSOR -->
+  <div id="cursor-dot"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- SMOOTH SCROLL WRAPPER -->
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+
+      <!-- NAV -->
+      <nav id="main-nav">
+        <div class="nav-logo">Roos<span>Closet</span></div>
+        <ul class="nav-links">
+          <li><a href="#problem">Problem</a></li>
+          <li><a href="#solution">Solution</a></li>
+          <li><a href="#atlas">ATLAS</a></li>
+          <li><a href="#mirror">MIRROR</a></li>
+          <li><a href="#aws">AWS</a></li>
+          <li><a href="#founder">Founder</a></li>
+          <li><a href="#ask" class="nav-cta">Get Activate</a></li>
+        </ul>
+      </nav>
+
+      <!-- HERO -->
+      <section class="hero" id="hero">
+        <div class="hero-bg-circle"></div>
+        <div class="container">
+          <div class="hero-badge">
+            <span class="dot"></span>
+            AWS Activate Application · 2026
+          </div>
+
+          <h1 class="display" id="hero-title">
+            Fashion Intelligence<br>
+            That <em>Explains</em><br>
+            Itself
+          </h1>
+
+          <p class="hero-sub">
+            AWS‑native infrastructure that extracts semantic product attributes
+            and causally explains return risk — in real time.
+          </p>
+
+          <div class="hero-cta-row">
+            <a href="#problem" class="btn btn-primary btn-arrow">Explore the pitch</a>
+            <a href="#founder" class="btn btn-ghost">Meet the founder</a>
+            <div class="hero-scroll-hint">
+              <span class="scroll-line"></span>
+              Scroll to explore
+            </div>
+          </div>
+
+          <div class="stats-strip" id="hero-stats">
+            <div class="stat-cell">
+              <div class="stat-num"><em>$100B</em>+</div>
+              <div class="stat-desc">Annual return losses in fashion e-commerce</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-num">25–<em>40%</em></div>
+              <div class="stat-desc">Average industry return rate</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-num"><em>82%</em></div>
+              <div class="stat-desc">Search failures from attribution gaps</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MARQUEE -->
+      <div class="marquee-bar" aria-hidden="true">
+        <div class="marquee-track" id="marquee-track">
+          <span>Semantic Catalog Intelligence</span><span class="accent-dot">✦</span>
+          <span>AWS‑Native Infrastructure</span><span class="accent-dot">✦</span>
+          <span>Causal Return Intelligence</span><span class="accent-dot">✦</span>
+          <span>15 AWS Services</span><span class="accent-dot">✦</span>
+          <span>ATLAS · MIRROR</span><span class="accent-dot">✦</span>
+          <span>Real‑Time Scoring</span><span class="accent-dot">✦</span>
+          <span>XGBoost · Claude 3 · SageMaker</span><span class="accent-dot">✦</span>
+          <span>Multi‑Tenant from Day One</span><span class="accent-dot">✦</span>
+          <!-- duplicate -->
+          <span>Semantic Catalog Intelligence</span><span class="accent-dot">✦</span>
+          <span>AWS‑Native Infrastructure</span><span class="accent-dot">✦</span>
+          <span>Causal Return Intelligence</span><span class="accent-dot">✦</span>
+          <span>15 AWS Services</span><span class="accent-dot">✦</span>
+          <span>ATLAS · MIRROR</span><span class="accent-dot">✦</span>
+          <span>Real‑Time Scoring</span><span class="accent-dot">✦</span>
+          <span>XGBoost · Claude 3 · SageMaker</span><span class="accent-dot">✦</span>
+          <span>Multi‑Tenant from Day One</span><span class="accent-dot">✦</span>
+        </div>
+      </div>
+
+      <!-- PROBLEM -->
+      <section id="problem">
+        <div class="section-number" aria-hidden="true">01</div>
+        <div class="container">
+          <div class="section-label">The problem</div>
+          <h2>
+            Product data written<br>
+            for <em>warehouses</em>, not customers
+          </h2>
+          <p class="lead">
+            "PLT‑BLK‑MD‑001" doesn't tell you <strong>"something to wear to a rooftop bar."</strong>
+            The gap between catalog language and customer intent is costing fashion merchants billions.
+          </p>
+
+          <div class="problem-grid">
+            <div class="problem-card">
+              <div class="problem-icon">🔍</div>
+              <h3>Catalog failure</h3>
+              <div class="problem-stat">82%</div>
+              <p>Of search and recommendation failures trace back to missing semantic attributes. Manual tagging costs $50K+ per year per operator — and it still gets it wrong.</p>
+            </div>
+            <div class="problem-card">
+              <div class="problem-icon">📦</div>
+              <h3>Return hemorrhage</h3>
+              <div class="problem-stat">$1.4B</div>
+              <p>Lost daily to fashion returns. Sizing uncertainty drives 47%, photography mismatch 31%, description gap 15% — all solvable with better data.</p>
+            </div>
+          </div>
+
+          <p style="margin-top: 3rem; font-size: 1rem; color: var(--ink-muted);">
+            <strong style="color: var(--ink);">Result:</strong> a broken feedback loop between catalog and returns — the same mistakes cost merchants millions, year after year, with no intelligence layer to close it.
+          </p>
+        </div>
+      </section>
+
+      <div class="h-rule"></div>
+
+      <!-- SOLUTION -->
+      <section id="solution">
+        <div class="section-number" aria-hidden="true">02</div>
+        <div class="container">
+          <div class="section-label">The solution</div>
+          <h2>Two products.<br><em>One</em> intelligence layer.</h2>
+          <p class="lead">
+            Not a wrapper. Not a prompt. A genuine production ML platform built on 15 AWS services — designed so each product makes the other smarter.
+          </p>
+
+          <div class="solution-grid">
+            <div class="solution-card">
+              <div class="solution-tag">Product 01</div>
+              <div class="solution-title">ATLAS</div>
+              <div class="solution-sub">Semantic Catalog Intelligence</div>
+              <p>Ingest a product image + sparse description → get 180+ structured attributes, a 512‑dim style embedding, and return‑risk flags — in under 60 seconds.</p>
+              <div class="solution-badge"><span class="dot"></span> 60s per product · 180+ attributes</div>
+            </div>
+            <div class="solution-card">
+              <div class="solution-tag">Product 02</div>
+              <div class="solution-title">MIRROR</div>
+              <div class="solution-sub">Causal Return Intelligence</div>
+              <p>Score every order at checkout in &lt;150ms. Explain <em>why</em> it's high‑risk — sizing, photography, history — and prescribe interventions with ROI estimates.</p>
+              <div class="solution-badge"><span class="dot"></span> &lt;150ms latency · ROI estimates</div>
+            </div>
+          </div>
+
+          <p style="text-align: center; margin-top: 3rem;">
+            <span style="display:inline-flex; align-items:center; gap:.5rem; background: var(--emerald-tint); padding: .5rem 1.4rem; border-radius:40px; font-size: .82rem; font-weight: 600; color: var(--emerald); border: 1px solid rgba(6,95,70,.18);">
+              ⚡ Built on 15 AWS services — not a third‑party wrapper
+            </span>
+          </p>
+        </div>
+      </section>
+
+      <div class="h-rule"></div>
+
+      <!-- ATLAS -->
+      <section id="atlas">
+        <div class="section-number" aria-hidden="true">03</div>
+        <div class="container">
+          <div class="section-label">Deep dive · ATLAS</div>
+          <h2>A 5‑stage pipeline,<br>orchestrated <em>end-to-end</em></h2>
+          <p class="lead">
+            Step Functions coordinate every stage — ingest to index — with full observability through CloudWatch and X‑Ray.
+          </p>
+
+          <div class="pipeline-wrap">
+            <div class="pipeline-row">
+              <div class="pipe-step">
+                <span class="pipe-step-num">01</span>
+                <span class="pipe-icon">📥</span>
+                <span class="pipe-name">Ingest</span>
+                <span class="pipe-label">S3 → SQS → Lambda</span>
+              </div>
+              <div class="pipe-step">
+                <span class="pipe-step-num">02</span>
+                <span class="pipe-icon">👕</span>
+                <span class="pipe-name">Rekognition</span>
+                <span class="pipe-label">Garment detection</span>
+              </div>
+              <div class="pipe-step">
+                <span class="pipe-step-num">03</span>
+                <span class="pipe-icon">🧬</span>
+                <span class="pipe-name">CLIP Embed</span>
+                <span class="pipe-label">SageMaker ViT-L/14</span>
+              </div>
+              <div class="pipe-step">
+                <span class="pipe-step-num">04</span>
+                <span class="pipe-icon">🤖</span>
+                <span class="pipe-name">Claude 3 Sonnet</span>
+                <span class="pipe-label">180+ attributes</span>
+              </div>
+              <div class="pipe-step">
+                <span class="pipe-step-num">05</span>
+                <span class="pipe-icon">🔍</span>
+                <span class="pipe-name">OpenSearch</span>
+                <span class="pipe-label">k‑NN + keyword index</span>
+              </div>
+            </div>
+
+            <div class="atlas-desc-grid">
+              <div class="atlas-desc-item">
+                <h4>Multimodal reasoning</h4>
+                <p>Claude analyses the image + Rekognition labels + merchant text to understand product intent. Return risk flags are extracted at ingest, not as an afterthought.</p>
+              </div>
+              <div class="atlas-desc-item">
+                <h4>Style embedding search</h4>
+                <p>512‑dim vectors enable aesthetic search — "quiet luxury", "coastal grandmother" — not just keyword matching. Semantic distance surfaces intent.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="h-rule"></div>
+
+      <!-- MIRROR -->
+      <section id="mirror">
+        <div class="section-number" aria-hidden="true">04</div>
+        <div class="container">
+          <div class="section-label">Deep dive · MIRROR</div>
+          <h2>Predict. Explain.<br><em>Prescribe.</em></h2>
+          <p class="lead">
+            Three layers that turn a return risk score into a concrete, ROI-quantified intervention — delivered in under 150ms at checkout.
+          </p>
+
+          <div class="mirror-layers">
+            <div class="mirror-layer">
+              <span class="mirror-layer-num">01</span>
+              <h4>Predict</h4>
+              <p>XGBoost on 200 features across 4 domains — sizing, content, customer history, order context. Scores every order at checkout, in real time.</p>
+            </div>
+            <div class="mirror-layer">
+              <span class="mirror-layer-num">02</span>
+              <h4>Explain</h4>
+              <p>DoWhy causal graph identifies root causes, not just correlations. Attributions like "sizing: 78%", "photography: 61%" — so you fix the right thing.</p>
+            </div>
+            <div class="mirror-layer">
+              <span class="mirror-layer-num">03</span>
+              <h4>Prescribe</h4>
+              <p>Bedrock Claude generates ranked interventions with ROI estimates. "Add a size chart → 12% return reduction → $4,200/month saved."</p>
+            </div>
+          </div>
+
+          <div class="code-block">
+            <div class="code-label">Live API response · order ORD‑48291</div>
+            <pre>{
+  <span class="key">"order_id"</span>:            <span class="str">"ORD-48291"</span>,
+  <span class="key">"return_risk_score"</span>:   <span class="num">0.73</span>,
+  <span class="key">"risk_level"</span>:          <span class="str">"HIGH"</span>,
+  <span class="key">"causal_flags"</span>: {
+    <span class="key">"sizing"</span>:   <span class="num">0.81</span>,
+    <span class="key">"content"</span>:  <span class="num">0.52</span>,
+    <span class="key">"history"</span>:  <span class="num">0.67</span>,
+    <span class="key">"context"</span>:  <span class="num">0.31</span>
+  },
+  <span class="key">"recommended_action"</span>:  <span class="str">"show_size_chart_modal"</span>,
+  <span class="key">"latency_ms"</span>:          <span class="num">87</span>
+}</pre>
+          </div>
+        </div>
+      </section>
+
+      <div class="h-rule"></div>
+
+      <!-- FLYWHEEL -->
+      <section id="flywheel">
+        <div class="section-number" aria-hidden="true">05</div>
+        <div class="container">
+          <div class="section-label">The moat</div>
+          <h2>A self-improving<br><em>data flywheel</em></h2>
+          <p class="lead">
+            ATLAS and MIRROR are deeply coupled. Every order makes both systems smarter. The longer a merchant runs, the more accurate predictions become — and the harder this is to replicate.
+          </p>
+
+          <div class="flywheel-wrap">
+            <div class="flywheel-row" id="flywheel-row">
+              <div class="fly-item">
+                ATLAS extracts <span class="em">return risk flags</span><br>
+                <small style="color:var(--ink-muted);">color mismatch, size ambiguity…</small>
+              </div>
+              <div class="fly-arrow">→</div>
+              <div class="fly-item">
+                MIRROR confirms <span class="em">causal roots</span><br>
+                <small style="color:var(--ink-muted);">real orders validate flags</small>
+              </div>
+              <div class="fly-arrow">→</div>
+              <div class="fly-item">
+                EventBridge triggers <span class="em">SKU re-processing</span><br>
+                <small style="color:var(--ink-muted);">ATLAS updates its model</small>
+              </div>
+              <div class="fly-arrow">→</div>
+              <div class="fly-item">
+                <span class="em">Next prediction</span> more accurate<br>
+                <small style="color:var(--ink-muted);">compounding over time</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="h-rule"></div>
+
+      <!-- AWS -->
+      <section id="aws">
+        <div class="section-number" aria-hidden="true">06</div>
+        <div class="container">
+          <div class="section-label">Infrastructure</div>
+          <h2>15 AWS services.<br><em>Genuine</em> dependency.</h2>
+          <p class="lead">
+            RoosCloset is not a wrapper around a single API. It is production ML infrastructure with multi-tenant isolation, serverless compute, and full observability — from day one.
+          </p>
+
+          <div class="aws-grid" id="aws-grid">
+            <div class="aws-item">S3</div>
+            <div class="aws-item">Step Functions</div>
+            <div class="aws-item">SQS</div>
+            <div class="aws-item">Lambda</div>
+            <div class="aws-item">Rekognition</div>
+            <div class="aws-item">SageMaker</div>
+            <div class="aws-item">Bedrock</div>
+            <div class="aws-item">OpenSearch</div>
+            <div class="aws-item">Kinesis</div>
+            <div class="aws-item">DynamoDB</div>
+            <div class="aws-item">API Gateway</div>
+            <div class="aws-item">EventBridge</div>
+            <div class="aws-item">Cognito</div>
+            <div class="aws-item">CloudWatch</div>
+            <div class="aws-item">X-Ray</div>
+          </div>
+
+          <div class="problem-grid" style="margin-top: 3rem;">
+            <div class="problem-card">
+              <div class="problem-icon">🏢</div>
+              <h3>Multi-tenant from day one</h3>
+              <p>Cognito user pools, tenant-prefixed S3 keys, and DynamoDB partition-key isolation ensure zero cross-tenant data leakage at the infrastructure level.</p>
+            </div>
+            <div class="problem-card">
+              <div class="problem-icon">⚡</div>
+              <h3>Serverless & cost-optimised</h3>
+              <p>No EC2. No idle compute. Lambda, Step Functions, and Kinesis scale precisely with usage — infrastructure cost is a direct function of revenue.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="h-rule"></div>
+
+      <!-- FOUNDER -->
+      <section id="founder">
+        <div class="section-number" aria-hidden="true">07</div>
+        <div class="container">
+          <div class="section-label">The builder</div>
+          <div class="founder-wrap">
+            <div class="founder-left">
+              <div class="founder-avatar">NK</div>
+            </div>
+            <div class="founder-right">
+              <div class="founder-name">Najmun Nahar Khan</div>
+              <div class="founder-title">Self-taught ML Engineer · Founder</div>
+              <p class="founder-bio">6 production AI systems shipped — flood detection, disease forecasting, industrial quality control. Deep expertise in AWS infrastructure, SageMaker, and CDK. Now applying that stack to the $100B fashion returns problem.</p>
+              <div class="founder-detail">
+                <span class="icon">📍</span> Dhaka, Bangladesh
+              </div>
+              <div class="founder-detail">
+                <span class="icon">✉️</span>
+                <a href="mailto:najmun_nahar_khan@icloud.com" style="color: var(--emerald); font-weight: 500;">najmun_nahar_khan@icloud.com</a>
+              </div>
+              <div class="skill-chips">
+                <span class="chip">AWS · SageMaker · CDK</span>
+                <span class="chip">GSAP Animations</span>
+                <span class="chip">XGBoost · DoWhy</span>
+                <span class="chip">Claude 3 · Bedrock</span>
+                <span class="chip">OpenSearch k-NN</span>
+                <span class="chip">Multi-tenant SaaS</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ASK / CTA -->
+      <section class="ask-section" id="ask">
+        <div class="container">
+          <div class="section-label" style="color: var(--emerald-mid);">Why AWS Activate</div>
+          <h2>$1,000 in credits.<br><em>3–4 months</em> of runway.</h2>
+          <p class="lead" style="max-width: 680px;">
+            At scale — 1,000 tenants, 10M orders/month — infrastructure runs $1.5K–2.5K/month. Credits let us onboard design partners and iterate before first revenue, without cutting scope.
+          </p>
+
+          <div class="ask-numbers">
+            <div class="ask-num-block">
+              <div class="big"><em>$35</em>/mo</div>
+              <div class="small">Current idle spend</div>
+            </div>
+            <div class="ask-num-block">
+              <div class="big"><em>$2K</em>/mo</div>
+              <div class="small">At-scale projection</div>
+            </div>
+            <div class="ask-num-block">
+              <div class="big"><em>3–4</em> mo</div>
+              <div class="small">Runway from $1K credits</div>
+            </div>
+            <div class="ask-num-block">
+              <div class="big"><em>15</em> svcs</div>
+              <div class="small">Genuine AWS dependency</div>
+            </div>
+          </div>
+
+          <div class="ask-cta-row">
+            <a href="#" class="btn btn-white btn-arrow">Apply with AWS Activate</a>
+            <a href="https://github.com/najmun-ai/rooscloset.store" target="_blank" class="btn btn-ghost-white">View on GitHub ↗</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer>
+        <div class="container">
+          <div class="footer-inner">
+            <div class="footer-logo">Roos<em>Closet</em></div>
+            <p class="footer-copy" style="max-width: 100%;">© 2026 RoosCloset · Built for AWS Activate Founders</p>
+            <a href="https://github.com/najmun-ai/rooscloset.store" target="_blank" class="footer-link">GitHub ↗</a>
+          </div>
+        </div>
+      </footer>
+
+    </div> <!-- /smooth-content -->
+  </div> <!-- /smooth-wrapper -->
+
+  <!-- ═══════════════ SCRIPTS ═══════════════ -->
+  <script>
+    // ── Enable custom cursor (fallback) ──
+    document.body.classList.add('no-cursor');
+
+    // ── GSAP registration ──
+    gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText);
+
+    // ── ScrollSmoother setup (with fallback) ──
+    let smoother;
+    try {
+      smoother = ScrollSmoother.create({
+        wrapper: '#smooth-wrapper',
+        content: '#smooth-content',
+        smooth: 1.2,
+        effects: true,
+        normalizeScroll: true,
+        ignoreMobileResize: true
+      });
+    } catch (e) {
+      console.warn('ScrollSmoother trial key required – falling back to native scroll.');
+      // Remove wrapper and content wrappers
+      const wrapper = document.getElementById('smooth-wrapper');
+      const content = document.getElementById('smooth-content');
+      if (wrapper && content) {
+        const parent = wrapper.parentNode;
+        parent.insertBefore(content, wrapper);
+        parent.removeChild(wrapper);
+      }
+    }
+
+    // ── Refresh ScrollTrigger after smooth init ──
+    ScrollTrigger.refresh();
+
+    // ── Custom cursor movement ──
+    const dot  = document.getElementById('cursor-dot');
+    const ring = document.getElementById('cursor-ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+    function moveCursor() {
+      dot.style.left  = mx + 'px';
+      dot.style.top   = my + 'px';
+      rx += (mx - rx) * .12;
+      ry += (my - ry) * .12;
+      ring.style.left = rx + 'px';
+      ring.style.top  = ry + 'px';
+      requestAnimationFrame(moveCursor);
+    }
+    moveCursor();
+
+    // ── Nav scroll effect ──
+    const nav = document.getElementById('main-nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    // ── Set initial states (prevents flash) ──
+    gsap.set('.hero .hero-sub, .hero .hero-cta-row, .hero .stats-strip', { opacity: 0, y: 40 });
+    gsap.set('.lead', { opacity: 0, y: 30 });
+    gsap.set('.problem-card, .solution-card, .mirror-layer', { opacity: 0, y: 40, scale: 0.97 });
+    gsap.set('.pipe-step', { opacity: 0, y: 30 });
+    gsap.set('.atlas-desc-item', { opacity: 0, y: 20 });
+    gsap.set('.aws-item', { opacity: 0, scale: 0.85 });
+    gsap.set('.founder-left, .founder-right', { opacity: 0, x: -50 });
+    gsap.set('.founder-right', { x: 50 });
+    gsap.set('.chip', { opacity: 0, scale: 0.85 });
+    gsap.set('.ask-num-block', { opacity: 0, y: 30 });
+    gsap.set('.code-block', { opacity: 0, y: 30 });
+    gsap.set('.flywheel-wrap', { opacity: 0, scale: 0.97 });
+    gsap.set('.solution-badge', { opacity: 0, y: 10 });
+
+    // ── HERO SPLIT TEXT ──
+    const heroSplit = new SplitText('#hero-title', { type: 'lines' });
+    gsap.from(heroSplit.lines, {
+      opacity: 0,
+      y: 80,
+      duration: 1.2,
+      stagger: 0.15,
+      ease: 'power4.out',
+      delay: 0.3
+    });
+
+    // ── HERO SUB, CTA, STATS ──
+    gsap.to('.hero .hero-sub, .hero .hero-cta-row, .hero .stats-strip', {
+      opacity: 1,
+      y: 0,
+      duration: 1,
+      stagger: 0.15,
+      delay: 0.9,
+      ease: 'power3.out'
+    });
+
+    // ── HEADINGS WITH SPLITTEXT (preserves <br> and <em>) ──
+    document.querySelectorAll('h2').forEach(el => {
+      const words = new SplitText(el, { type: 'words' });
+      gsap.from(words.words, {
+        scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' },
+        opacity: 0,
+        y: 40,
+        duration: 0.8,
+        stagger: 0.04,
+        ease: 'power4.out'
+      });
+    });
+
+    // ── SECTION LABELS ──
+    document.querySelectorAll('.section-label').forEach(el => {
+      gsap.from(el, {
+        scrollTrigger: { trigger: el, start: 'top 90%' },
+        opacity: 0,
+        x: -20,
+        duration: 0.7,
+        ease: 'power2.out'
+      });
+    });
+
+    // ── LEAD PARAGRAPHS ──
+    document.querySelectorAll('.lead').forEach(el => {
+      gsap.to(el, {
+        scrollTrigger: { trigger: el, start: 'top 88%' },
+        opacity: 1,
+        y: 0,
+        duration: 0.9,
+        delay: 0.15,
+        ease: 'power3.out'
+      });
+    });
+
+    // ── PROBLEM CARDS ──
+    document.querySelectorAll('.problem-card').forEach((el, i) => {
+      gsap.to(el, {
+        scrollTrigger: { trigger: el, start: 'top 90%' },
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.8,
+        delay: i * 0.1,
+        ease: 'power3.out'
+      });
+    });
+
+    // ── SOLUTION CARDS ──
+    document.querySelectorAll('.solution-card').forEach((el, i) => {
+      gsap.to(el, {
+        scrollTrigger: { trigger: el, start: 'top 90%' },
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.8,
+        delay: i * 0.1,
+        ease: 'power3.out'
+      });
+    });
+
+    // ── SOLUTION BADGES ──
+    document.querySelectorAll('.solution-badge').forEach(el => {
+      gsap.to(el, {
+        scrollTrigger: { trigger: el, start: 'top 92%' },
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        ease: 'power2.out'
+      });
+    });
+
+    // ── PIPELINE STEPS ──
+    document.querySelectorAll('.pipe-step').forEach((el, i) => {
+      gsap.to(el, {
+        scrollTrigger: { trigger: '.pipeline-wrap', start: 'top 80%' },
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        delay: i * 0.1,
+        ease: 'power2.out'
+      });
+    });
+
+    // ── ATLAS DESC ITEMS ──
+    document.querySelectorAll('.atlas-desc-item').forEach(el => {
+      gsap.to(el, {
+        scrollTrigger: { trigger: '.atlas-desc-grid', start: 'top 85%' },
+        opacity: 1,
+        y: 0,
+        duration: 0.7,
+        stagger: 0.15,
+        ease: 'power2.out'
+      });
+    });
+
+    // ── MIRROR LAYERS ──
+    document.querySelectorAll('.mirror-layer').forEach((el, i) => {
+      gsap.to(el, {
+        scrollTrigger: { trigger: el, start: 'top 90%' },
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.8,
+        delay: i * 0.12,
+        ease: 'power3.out'
+      });
+    });
+
+    // ── CODE BLOCK ──
+    gsap.to('.code-block', {
+      scrollTrigger: { trigger: '.code-block', start: 'top 85%' },
+      opacity: 1,
+      y: 0,
+      duration: 0.8,
+      ease: 'power2.out'
+    });
+
+    // ── FLYWHEEL FLIP DEMO ──
+    const flyItems = document.querySelectorAll('.fly-item');
+    gsap.to('.flywheel-wrap', {
+      scrollTrigger: { trigger: '.flywheel-wrap', start: 'top 80%' },
+      opacity: 1,
+      scale: 1,
+      duration: 0.9,
+      ease: 'power3.out'
+    });
+    // FLIP-like effect: when each fly-item enters, it flips in
+    flyItems.forEach((el, i) => {
+      gsap.from(el, {
+        scrollTrigger: { trigger: el, start: 'top 92%' },
+        rotationX: 90,
+        opacity: 0,
+        duration: 0.7,
+        delay: i * 0.08,
+        ease: 'back.out(1.7)',
+        transformOrigin: 'center center'
+      });
+    });
+
+    // ── AWS ITEMS ──
+    document.querySelectorAll('.aws-item').forEach((el, i) => {
+      gsap.to(el, {
+        scrollTrigger: { trigger: '#aws-grid', start: 'top 80%' },
+        opacity: 1,
+        scale: 1,
+        duration: 0.4,
+        delay: i * 0.04,
+        ease: 'back.out(1.5)'
+      });
+    });
+
+    // ── FOUNDER ──
+    gsap.to('.founder-left', {
+      scrollTrigger: { trigger: '.founder-wrap', start: 'top 80%' },
+      opacity: 1,
+      x: 0,
+      duration: 1,
+      ease: 'power3.out'
+    });
+    gsap.to('.founder-right', {
+      scrollTrigger: { trigger: '.founder-wrap', start: 'top 80%' },
+      opacity: 1,
+      x: 0,
+      duration: 1,
+      ease: 'power3.out'
+    });
+
+    // ── CHIPS ──
+    document.querySelectorAll('.chip').forEach((el, i) => {
+      gsap.to(el, {
+        scrollTrigger: { trigger: '.skill-chips', start: 'top 88%' },
+        opacity: 1,
+        scale: 1,
+        duration: 0.45,
+        delay: i * 0.06,
+        ease: 'back.out(1.5)'
+      });
+    });
+
+    // ── ASK NUMBERS ──
+    document.querySelectorAll('.ask-num-block').forEach((el, i) => {
+      gsap.to(el, {
+        scrollTrigger: { trigger: '.ask-numbers', start: 'top 80%' },
+        opacity: 1,
+        y: 0,
+        duration: 0.7,
+        delay: i * 0.12,
+        ease: 'power3.out'
+      });
+    });
+
+    // ── HOVER EFFECTS ON PIPE ICONS ──
+    document.querySelectorAll('.pipe-step').forEach(step => {
+      step.addEventListener('mouseenter', () => {
+        gsap.to(step.querySelector('.pipe-icon'), { scale: 1.3, duration: 0.3, ease: 'back.out(2)' });
+      });
+      step.addEventListener('mouseleave', () => {
+        gsap.to(step.querySelector('.pipe-icon'), { scale: 1, duration: 0.3, ease: 'power2.out' });
+      });
+    });
+
+    // ── SECTION NUMBER PARALLAX ──
+    document.querySelectorAll('.section-number').forEach(num => {
+      gsap.to(num, {
+        scrollTrigger: { trigger: num.closest('section'), start: 'top bottom', end: 'bottom top', scrub: 2 },
+        y: -80,
+        ease: 'none'
+      });
+    });
+
+    // ── FINAL REFRESH ──
+    setTimeout(() => ScrollTrigger.refresh(), 300);
+  </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "rooscloset",
+  "version": "1.0.0",
+  "description": "B2B fashion e-commerce intelligence infrastructure",
+  "bin": { "app": "app.js" },
+  "scripts": { 
+    "build": "tsc", 
+    "cdk": "cdk",
+    "deploy": "npm run build && cdk deploy --all --require-approval never"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "^2.150.0",
+    "constructs": "^10.3.0",
+    "source-map-support": "^0.5.21"
+  },
+  "devDependencies": {
+    "typescript": "~5.4.0",
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.2"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ATLASProductAttributes",
+  "description": "Full semantic attribute schema for a fashion product, extracted by ATLAS pipeline",
+  "type": "object",
+  "properties": {
+    "garment_type": { "type": "string", "examples": ["dress", "blouse", "trousers", "jacket", "skirt", "knitwear"] },
+    "silhouette": { "type": "string", "examples": ["A-line", "straight", "oversized", "fitted", "wrap", "column", "bubble"] },
+    "neckline": { "type": "string", "examples": ["crew", "V-neck", "square", "off-shoulder", "turtleneck", "cowl", "none"] },
+    "sleeve_length": { "type": "string", "enum": ["none", "sleeveless", "short", "3/4", "long", "extra-long"] },
+    "sleeve_style": { "type": "string", "examples": ["puff", "bishop", "bell", "raglan", "cap", "standard", "none"] },
+    "length": { "type": "string", "enum": ["micro-mini", "mini", "midi", "maxi", "cropped", "standard", "floor"] },
+    "fit": { "type": "string", "enum": ["slim", "regular", "relaxed", "oversized", "tailored", "wrap", "boxy"] },
+    "fabric_family": { "type": "string", "examples": ["knit", "woven", "denim", "leather", "technical", "lace", "velvet"] },
+    "fabric_texture": { "type": "string", "examples": ["smooth", "ribbed", "textured", "sheer", "opaque", "matte", "lustrous"] },
+    "primary_color": { "type": "string", "description": "Closest Pantone family name" },
+    "color_family": { "type": "string", "enum": ["neutrals", "blues", "greens", "reds", "yellows", "purples", "pinks", "multicolor", "prints", "black", "white"] },
+    "print_pattern": { "type": "string", "enum": ["solid", "stripe", "check", "plaid", "floral", "abstract", "geometric", "animal", "logo", "none"] },
+    "embellishment": { "type": "array", "items": { "type": "string" }, "examples": [["beading", "embroidery"], ["fringe"], ["none"]] },
+    "closure_type": { "type": "string", "enum": ["zip", "button", "tie", "pull-on", "hook-eye", "magnetic", "none"] },
+    "occasion_primary": { "type": "string", "enum": ["casual", "work", "evening", "activewear", "occasion", "beach", "lounge", "brunch"] },
+    "occasion_stack": { "type": "array", "maxItems": 3, "items": { "type": "string" } },
+    "season_affinity": { "type": "array", "items": { "type": "string", "enum": ["spring", "summer", "fall", "winter", "year-round"] } },
+    "formality_score": { "type": "number", "minimum": 0.0, "maximum": 1.0, "description": "0 = most casual, 1 = most formal" },
+    "trend_alignment": {
+      "type": "object",
+      "description": "Continuous position on known aesthetic axes (0-1 per axis)",
+      "properties": {
+        "quiet_luxury": { "type": "number", "minimum": 0, "maximum": 1 },
+        "minimalist": { "type": "number", "minimum": 0, "maximum": 1 },
+        "coastal_grandmother": { "type": "number", "minimum": 0, "maximum": 1 },
+        "dark_academia": { "type": "number", "minimum": 0, "maximum": 1 },
+        "cottagecore": { "type": "number", "minimum": 0, "maximum": 1 },
+        "mob_wife": { "type": "number", "minimum": 0, "maximum": 1 },
+        "streetwear": { "type": "number", "minimum": 0, "maximum": 1 },
+        "preppy": { "type": "number", "minimum": 0, "maximum": 1 },
+        "boho": { "type": "number", "minimum": 0, "maximum": 1 },
+        "scandinavian_minimal": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "style_notes": { "type": "string", "description": "1-2 sentence consumer-language product description" },
+    "search_keywords": { "type": "array", "items": { "type": "string" }, "minItems": 5, "maxItems": 20 },
+    "pdp_copy_headline": { "type": "string", "maxLength": 60 },
+    "pdp_copy_description": { "type": "string", "maxLength": 500 },
+    "return_risk_flags": {
+      "type": "object",
+      "description": "Flags that feed directly into MIRROR's feature vector",
+      "properties": {
+        "color_photography_mismatch_risk": { "type": "string", "enum": ["low", "medium", "high"] },
+        "size_ambiguity_risk": { "type": "string", "enum": ["low", "medium", "high"] },
+        "fabric_hand_unclear": { "type": "boolean" },
+        "needs_size_chart": { "type": "boolean" },
+        "needs_model_measurements": { "type": "boolean" }
+      }
+    },
+    "extraction_confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+    "extraction_notes": { "type": "string" },
+    "_meta": {
+      "type": "object",
+      "properties": {
+        "tenant_id": { "type": "string" },
+        "sku_id": { "type": "string" },
+        "extracted_at": { "type": "string", "format": "date-time" },
+        "model_id": { "type": "string" },
+        "pipeline_stage": { "type": "string" }
+      }
+    }
+  },
+  "required": ["garment_type", "occasion_primary", "formality_score", "color_family", "return_risk_flags", "extraction_confidence"]
+}
